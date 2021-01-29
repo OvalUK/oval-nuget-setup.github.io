@@ -1,6 +1,6 @@
-# Creating a private Maven repository #
+# Creating a private Nuget repository #
 
-Sign in to the company GitHub account, create a new private repository for the package. It is not possible to create a maven package without a git repository.
+Sign in to the company based GitHub account, create a new private repository for the package. It is not possible to create a nuget package without a git repository.
 
 ![new repo](https://s3.eu-west-1.amazonaws.com/ovalgeneric/public/assets/nuget-guide/create-repo.png)
 
