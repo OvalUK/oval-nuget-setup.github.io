@@ -1,4 +1,4 @@
-# Creating a private Nuget repository #
+# Creating a private Nuget repository
 
 Sign in to the company based GitHub account, create a new private repository for the package. It is not possible to create a nuget package without a git repository.
 
@@ -12,7 +12,7 @@ Take a note of the repository url, this will be required later when setting up y
 
 ---
 
-## If you do not have an existing API key for your github account then you will need to create one ##
+## If you do not have an existing API key for your github account then you will need to create one
 
 First go to settings > Developer settings
 
@@ -30,7 +30,7 @@ After the token generates copy it for use later.
 
 ---
 
-## Setting up a package to push to your github repository ##
+## Setting up a package to push to your github repository
 
 In your root project folder create a ```nuget.config``` file. Here we will add out Github credentials
 
@@ -77,7 +77,7 @@ With this setup we can ```git push ...``` our repository, ```dotnet publish -c R
 
 ---
 
-## Pulling the package into a project ##
+## Pulling the package into a project
 
 To pull a package into a new or existing project you will need to replicate the ```nuget.config``` above and update your ```.csproj``` and add the _PackageReference_ to an _ItemGroup_ property. This repository does not need the _RepositoryUrl_ property.
 
