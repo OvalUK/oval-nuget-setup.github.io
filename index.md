@@ -73,7 +73,7 @@ In the ```.csproj``` you need to add some additional properties including the _R
 </Project>
 ```
 
-With this setup we can ```git push ...``` our repository, ```dotnet publish -c Release``` and ```dotnet nuget pack -c Release``` to publish the package to our private repository. In theory the pack command should read the API key from the config file but that has not been the case for me, if the same if true for you then add ```--api-key YOUR_API_KEY``` to the pack command.
+With this setup we can ```git push ...``` our repository, ```dotnet publish -c Release``` and ```dotnet nuget pack -c Release``` and finally to publish to our private repository ```dotnet nuget push PATH_TO_nupkg_FILE --source "github"```. In theory the ```nuget push``` command should read the API key from the config file but that has not been the case for me, if the same if true for you then add ```--api-key YOUR_API_KEY``` to the ```nuget push``` command.
 
 ---
 
