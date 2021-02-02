@@ -75,6 +75,61 @@ In the ```.csproj``` you need to add some additional properties including the _R
 
 With this setup we can ```git push ...``` our repository, ```dotnet publish -c Release``` and ```dotnet nuget pack -c Release``` and finally to publish to our private repository ```dotnet nuget push PATH_TO_nupkg_FILE --source "github"```. In theory the ```nuget push``` command should read the API key from the config file but that has not been the case for me, if the same if true for you then add ```--api-key YOUR_API_KEY``` to the ```nuget push``` command.
 
+### Automatic deployments with GitHub
+
+If you using GitHub actions to complete the build and deployment process, the source repository needs to have a actions yaml file, name the file appropriately in the following location ```./.github/workflows/MY_ACTION.yml``` The contents should be as follows:
+
+```YAML
+name: Package Publisher
+
+on:
+  push:
+    tags:
+      - "*"
+  release:
+    types:
+      - published
+    
+env:
+  PROJECT_DIR: '.'
+  PROJECT_NAME: NugetTest
+
+  GITHUB_FEED: https://nuget.pkg.github.com/OvalUK/
+  GITHUB_USER: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-and-deploy:
+    # if: github.event_name == 'release'
+    name: Build and Deploy
+    runs-on: ubuntu-20.04
+    environment: production
+    steps:
+    - uses: actions/checkout@v2
+    - run: dotnet clean -c Release && dotnet nuget locals all --clear && dotnet publish -c Release
+    - run: |
+        arrTag=(${GITHUB_REF//\// })
+        VERSION="${arrTag[2]}"
+        VERSION="${VERSION//v}"
+        dotnet pack -c Release --no-restore --include-symbols --include-source -p:PackageVersion=$VERSION $PROJECT_DIR/$PROJECT_NAME.csproj
+    - name: Add GRP Source
+      run: dotnet nuget add source https://nuget.pkg.github.com/ovaluk/index.json -n "GRP" -u $GITHUB_USER -p $GITHUB_TOKEN --store-password-in-clear-text
+    - name: Publish package to repo
+      run: |
+        for f in "./bin/Release/*$VERSION.nupkg"
+        do
+          dotnet nuget push $f --source "GRP" --skip-duplicate --api-key $GITHUB_TOKEN
+        done
+```
+
+This above action will build the package using the ubuntu-20.04 operating system with .NET5 installed. During the pack phase the version number will be updated using the tag value. Git tags should be in the format _v#.#.#_ or _v#.#.#-rc_ this will result in a dependency similar to:
+
+```sh
+dotnet add PROJECT package Oval.NugetTest --version 0.22.0-rc
+```
+
+The Add GRP and publish phases take each versioned package and pushes them to the private repository, including the associated symbols packages.
+
 ---
 
 ## Pulling the package into a project
