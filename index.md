@@ -95,8 +95,8 @@ env:
   PROJECT_NAME: NugetTest
 
   GITHUB_FEED: https://nuget.pkg.github.com/OvalUK/
-  GITHUB_USER: ${{ github.actor }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_USER: ${{ "{{ github.actor" }}
+  GITHUB_TOKEN: ${{ "{{ secrets.GITHUB_TOKEN" }}}}
 
 jobs:
   build-and-deploy:
